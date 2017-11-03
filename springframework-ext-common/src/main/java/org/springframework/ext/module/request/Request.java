@@ -1,6 +1,5 @@
 package org.springframework.ext.module.request;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -10,6 +9,5 @@ import lombok.Data;
  */
 @Data
 public class Request {
-    @ApiModelProperty(example = "devcon-domain", notes = "调用的系统名")
     private String appName;
 }

@@ -12,7 +12,4 @@ import org.springframework.ext.module.result.Result;
  */
 @Data
 public class Response<T> extends Result<T> {
-    public Response(NestedRunTimeException e) {
-
-    }
 }
