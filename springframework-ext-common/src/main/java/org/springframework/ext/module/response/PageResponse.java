@@ -23,7 +23,7 @@ public class PageResponse<T> extends Response<List<T>> {
         }
     }
 
-    public Integer getPageTotal() {
+    public int getPageTotal() {
         int total = getTotal();
         int pageSize = getPageSize();
 

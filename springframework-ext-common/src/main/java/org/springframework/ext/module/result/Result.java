@@ -37,8 +37,8 @@ public class Result<T> implements ResultSupport<T> {
      *
      * @param status 状态码
      */
-    public void setStatus(Status status) {
-        this.setStatus(status.isSuccess(), status.getStatus(), status.getCode(), status.getMsg());
+    public static Result create(Status status) {
+        return create(status.isSuccess(), status.getStatus(), status.getCode(), status.getMsg());
     }
 
     /**
@@ -46,8 +46,8 @@ public class Result<T> implements ResultSupport<T> {
      *
      * @param e 异常
      */
-    public void setStatus(NestedRuntimeException e) {
-        setStatus(false, e.getStatus(), e.getCode(), e.getMsg());
+    public static Result create(NestedRuntimeException e) {
+        return create(false, e.getStatus(), e.getCode(), e.getMsg());
     }
 
     /**
@@ -55,11 +55,14 @@ public class Result<T> implements ResultSupport<T> {
      *
      * @param status 状态码
      */
-    public void setStatus(boolean success, int status, String errorCode, String message) {
-        this.setSuccess(success);
-        this.setStatus(status);
-        this.setCode(errorCode);
-        this.setMsg(message);
+    public static Result create(boolean success, int status, String errorCode, String message) {
+        Result result = new Result();
+        result.setSuccess(success);
+        result.setStatus(status);
+        result.setCode(errorCode);
+        result.setMsg(message);
+
+        return result;
     }
 
     /**
@@ -68,8 +71,8 @@ public class Result<T> implements ResultSupport<T> {
      * @param status   状态码
      * @param messages 替换文本
      */
-    public void setStatus(Status status, String... messages) {
-        this.setStatus(status.isSuccess(), status.getStatus(), status.getCode(), status.getMsg(), messages);
+    public static Result create(Status status, String... messages) {
+        return create(status.isSuccess(), status.getStatus(), status.getCode(), status.getMsg(), messages);
     }
 
     /**
@@ -78,10 +81,12 @@ public class Result<T> implements ResultSupport<T> {
      * @param status   状态码
      * @param messages 替换文本
      */
-    public void setStatus(boolean success, int status, String errorCode, String message, String... messages) {
-        this.setSuccess(success);
-        this.setStatus(status);
-        this.setCode(errorCode);
+    public static Result create(boolean success, int status, String errorCode, String message, String... messages) {
+        Result result = new Result();
+
+        result.setSuccess(success);
+        result.setStatus(status);
+        result.setCode(errorCode);
         if (message != null && message.contains("%s")) {
             if (messages != null) {
                 message = String.format(message, (Object[]) messages);
@@ -91,16 +96,13 @@ public class Result<T> implements ResultSupport<T> {
                 message = message.replaceAll("%s", "");
             }
         }
-        this.setMsg(message);
+        result.setMsg(message);
+
+        return result;
     }
 
     @Override
     public String toString() {
         return JsonHelper.toJson(this);
-    }
-
-    @Override
-    public void setStatus(int status) {
-        this.status = status;
     }
 }
