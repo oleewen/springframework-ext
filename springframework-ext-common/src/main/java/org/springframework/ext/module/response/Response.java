@@ -1,7 +1,6 @@
 package org.springframework.ext.module.response;
 
 import lombok.Data;
-import org.springframework.ext.common.exception.NestedRunTimeException;
 import org.springframework.ext.module.result.Result;
 
 /**

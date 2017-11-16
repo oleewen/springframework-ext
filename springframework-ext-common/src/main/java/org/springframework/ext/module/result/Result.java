@@ -1,7 +1,7 @@
 package org.springframework.ext.module.result;
 
 import lombok.Data;
-import org.springframework.ext.common.exception.NestedRunTimeException;
+import org.springframework.ext.common.exception.NestedRuntimeException;
 import org.springframework.ext.common.helper.JsonHelper;
 import org.springframework.ext.common.object.Status;
 
@@ -46,7 +46,7 @@ public class Result<T> implements ResultSupport<T> {
      *
      * @param e 异常
      */
-    public void setStatus(NestedRunTimeException e) {
+    public void setStatus(NestedRuntimeException e) {
         setStatus(false, e.getStatus(), e.getCode(), e.getMsg());
     }
 

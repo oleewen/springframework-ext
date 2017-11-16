@@ -7,35 +7,35 @@ import org.springframework.ext.common.object.Status;
  * Created by only on 2017/3/13.
  */
 public class ExceptionHelper {
-    public static NestedRunTimeException throwNotCatchException(Status status) {
+    public static NestedRuntimeException throwNotCatchException(Status status) {
         return throwException(status.getStatus(), status.getCode(), status.getMsg());
     }
 
-    public static NestedRunTimeException throwNotCatchException(String errorCode, String message) {
+    public static NestedRuntimeException throwNotCatchException(String errorCode, String message) {
         return throwException(-9999, errorCode, message);
     }
 
-    public static NestedRunTimeException throwNotCatchException(int status, String errorCode, String message) {
+    public static NestedRuntimeException throwNotCatchException(int status, String errorCode, String message) {
         throw new NotCatchRuntimeException(status, errorCode, message);
     }
 
-    public static NestedRunTimeException throwNotCatchException(String errorMessage) {
+    public static NestedRuntimeException throwNotCatchException(String errorMessage) {
         return throwNotCatchException(parseErrorMessage(errorMessage));
     }
 
-    public static NestedRunTimeException throwException(Status status) {
+    public static NestedRuntimeException throwException(Status status) {
         return throwException(status.getStatus(), status.getCode(), status.getMsg());
     }
 
-    public static NestedRunTimeException throwException(String errorCode, String message) {
+    public static NestedRuntimeException throwException(String errorCode, String message) {
         return throwException(-9999, errorCode, message);
     }
 
-    public static NestedRunTimeException throwException(int status, String errorCode, String message) {
-        throw new NestedRunTimeException(status, errorCode, message);
+    public static NestedRuntimeException throwException(int status, String errorCode, String message) {
+        throw new NestedRuntimeException(status, errorCode, message);
     }
 
-    public static NestedRunTimeException throwException(String errorMessage) {
+    public static NestedRuntimeException throwException(String errorMessage) {
         return throwException(parseErrorMessage(errorMessage));
     }
 
@@ -86,7 +86,7 @@ public class ExceptionHelper {
         };
     }
 
-    public static class NotCatchRuntimeException extends NestedRunTimeException {
+    public static class NotCatchRuntimeException extends NestedRuntimeException {
         public NotCatchRuntimeException(int status, String errorCode, String message) {
             super(status, errorCode, message);
         }

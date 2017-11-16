@@ -3,7 +3,7 @@ package org.springframework.ext.common.helper;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import org.springframework.beans.BeanUtils;
-import org.springframework.ext.common.exception.NestedRunTimeException;
+import org.springframework.ext.common.exception.NestedRuntimeException;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -117,7 +117,7 @@ public abstract class BeanHelper {
         try {
             result = clazz.newInstance();
         } catch (Exception e) {
-            throw new NestedRunTimeException(e);
+            throw new NestedRuntimeException(e);
         }
         return result;
     }
