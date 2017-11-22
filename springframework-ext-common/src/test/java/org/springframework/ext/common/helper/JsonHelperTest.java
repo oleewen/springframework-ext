@@ -1,8 +1,13 @@
 package org.springframework.ext.common.helper;
 
 import com.google.common.collect.Maps;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.hamcrest.CoreMatchers;
+import org.junit.Test;
 
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -23,10 +28,10 @@ public class JsonHelperTest {
 
     @org.junit.Test
     public void fromJson() throws Exception {
-        Store store = JsonHelper.fromJson("{\"online_time\":\"1970-01-01 08:00:00\", \"status\":10000}", Store.class);
+        Store store = JsonHelper.fromJson("{\"online_time\":\"1970-01-01 08:00:30\", \"status\":10000}", Store.class);
 
-        assertThat(store.status, CoreMatchers.is(10000));
-        assertThat(store.onlineTime, CoreMatchers.is(""));
+        assertThat(store.status, CoreMatchers.is(10000L));
+        assertThat(store.onlineTime.getTime(), CoreMatchers.is(30000L));
     }
 
     @org.junit.Test

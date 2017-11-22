@@ -2,10 +2,7 @@ package org.springframework.ext.common.helper;
 
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
+import com.google.gson.*;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -14,23 +11,25 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.text.DateFormat;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 文件描述：Json处理辅助类
  *
  * @author only
- *         Date 2014/12/9.
+ * @since 2014/12/9.
  */
 public abstract class JsonHelper {
-    /** json处理器 */
-    private static Gson gson = new GsonBuilder()
+    /** builder */
+    private static final GsonBuilder builder = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .setDateFormat(DateFormat.FULL)
-            .disableHtmlEscaping().create();
+            .registerTypeAdapter(Date.class, new DateFormatter())
+            .registerTypeAdapter(Map.class, new MapTypeAdapter())
+            .disableHtmlEscaping();
+    /** json处理器 */
+    private static Gson gson = builder.create();
 
     /**
      * 将object对象转为json字符串
@@ -99,11 +98,8 @@ public abstract class JsonHelper {
             Type type = new TypeToken<Map<K, V>>() {
             }.getType();
 
-            Gson gson = new GsonBuilder()
-                    /**
-                     * 重写map的反序列化：整数默认反序列化为Long
-                     */
-                    .registerTypeAdapter(type, new MapTypeAdapter()).create();
+           Gson gson = builder.registerTypeAdapter(type, new MapTypeAdapter())
+                              .create();
 
             return gson.fromJson(json, type);
         }
@@ -122,6 +118,26 @@ public abstract class JsonHelper {
         } else {
             return fromJson(json, new TypeToken<List<T>>() {
             }.getType());
+        }
+    }
+
+    // 日志格式化
+    private static class DateFormatter implements JsonDeserializer<Date> {
+        private static final String[] DATE_FORMATS = new String[]{
+                "yyyy-MM-dd HH:mm:ss",
+                "yyyy-MM-dd",
+                "yyyy/MM/dd"
+        };
+
+        @Override
+        public Date deserialize(JsonElement jsonElement, Type typeOF, JsonDeserializationContext context) throws JsonParseException {
+            for (String format : DATE_FORMATS) {
+                try {
+                    return new SimpleDateFormat(format).parse(jsonElement.getAsString());
+                } catch (ParseException e) {
+                }
+            }
+            throw new JsonParseException("Unparseable date:\"" + jsonElement.getAsString() + "\". Supported formats: " + Arrays.toString(DATE_FORMATS));
         }
     }
 
