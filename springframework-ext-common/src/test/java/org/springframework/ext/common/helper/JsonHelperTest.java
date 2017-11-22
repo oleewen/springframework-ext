@@ -2,9 +2,11 @@ package org.springframework.ext.common.helper;
 
 import com.google.common.collect.Maps;
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 
+import java.util.Date;
 import java.util.Map;
+
+import static org.junit.Assert.assertThat;
 
 /**
  * Created by only on 2017/7/11.
@@ -14,8 +16,17 @@ public class JsonHelperTest {
     public void toJson() throws Exception {
     }
 
+    class Store {
+        private Date onlineTime;
+        private Long status;
+    }
+
     @org.junit.Test
     public void fromJson() throws Exception {
+        Store store = JsonHelper.fromJson("{\"online_time\":\"1970-01-01 08:00:00\", \"status\":10000}", Store.class);
+
+        assertThat(store.status, CoreMatchers.is(10000));
+        assertThat(store.onlineTime, CoreMatchers.is(""));
     }
 
     @org.junit.Test
@@ -26,13 +37,13 @@ public class JsonHelperTest {
         map.put("k2", 999999.73);
 
         String json = JsonHelper.toJson(map);
-        Assert.assertThat(json, CoreMatchers.is("{\"k1\":111111,\"k2\":999999.73,\"k\":\"v\"}"));
+        assertThat(json, CoreMatchers.is("{\"k1\":111111,\"k2\":999999.73,\"k\":\"v\"}"));
 
 
         Map<String, Object> result = JsonHelper.fromJsonMap(json);
 
-        Assert.assertThat(result.size(), CoreMatchers.is(3));
-        Assert.assertThat(JsonHelper.toJson(result), CoreMatchers.is(json));
+        assertThat(result.size(), CoreMatchers.is(3));
+        assertThat(JsonHelper.toJson(result), CoreMatchers.is(json));
     }
 
     @org.junit.Test
@@ -41,9 +52,9 @@ public class JsonHelperTest {
 
         Map<String, Object> result = JsonHelper.fromJsonMap(json);
 
-        Assert.assertThat(result.size(), CoreMatchers.is(6));
+        assertThat(result.size(), CoreMatchers.is(6));
         String actual = JsonHelper.toJson(result);
-        Assert.assertThat(actual, CoreMatchers.is(json));
+        assertThat(actual, CoreMatchers.is(json));
     }
 
     @org.junit.Test

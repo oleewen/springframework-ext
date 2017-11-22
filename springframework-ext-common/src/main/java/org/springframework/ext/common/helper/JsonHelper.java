@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.text.DateFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,10 @@ import java.util.Map;
  */
 public abstract class JsonHelper {
     /** json处理器 */
-    private static Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).disableHtmlEscaping().create();
+    private static Gson gson = new GsonBuilder()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .setDateFormat(DateFormat.FULL)
+            .disableHtmlEscaping().create();
 
     /**
      * 将object对象转为json字符串
