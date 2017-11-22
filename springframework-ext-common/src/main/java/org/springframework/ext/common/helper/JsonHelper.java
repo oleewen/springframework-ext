@@ -2,6 +2,7 @@ package org.springframework.ext.common.helper;
 
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
@@ -25,7 +26,7 @@ import java.util.Map;
  */
 public abstract class JsonHelper {
     /** json处理器 */
-    private static Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+    private static Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).disableHtmlEscaping().create();
 
     /**
      * 将object对象转为json字符串
