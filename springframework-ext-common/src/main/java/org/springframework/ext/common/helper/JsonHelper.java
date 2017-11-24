@@ -1,15 +1,10 @@
 package org.springframework.ext.common.helper;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
-import com.google.gson.internal.LinkedTreeMap;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,7 +21,6 @@ public abstract class JsonHelper {
     private static final GsonBuilder builder = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(Date.class, new DateFormatter())
-            .registerTypeAdapter(Map.class, new MapTypeAdapter())
             .disableHtmlEscaping();
     /** json处理器 */
     private static Gson gson = builder.create();
@@ -98,8 +92,18 @@ public abstract class JsonHelper {
             Type type = new TypeToken<Map<K, V>>() {
             }.getType();
 
-           Gson gson = builder.registerTypeAdapter(type, new MapTypeAdapter())
-                              .create();
+            Gson gson = builder.registerTypeAdapter(type,
+                    (JsonDeserializer<Map<K, V>>) (jsonElement, typeOf, context) -> {
+
+                        Map<K, V> map = Maps.newHashMap();
+                        JsonObject jsonObject = jsonElement.getAsJsonObject();
+                        Set<Map.Entry<String, JsonElement>> entrySet = jsonObject.entrySet();
+                        for (Map.Entry<String, JsonElement> entry : entrySet) {
+                            map.put((K) entry.getKey(), (V) entry.getValue());
+                        }
+                        return map;
+                    })
+                    .create();
 
             return gson.fromJson(json, type);
         }
@@ -139,71 +143,5 @@ public abstract class JsonHelper {
             }
             throw new JsonParseException("Unparseable date:\"" + jsonElement.getAsString() + "\". Supported formats: " + Arrays.toString(DATE_FORMATS));
         }
-    }
-
-    // 复写数字类型默认反序列化为double的
-    public static class MapTypeAdapter extends TypeAdapter<Object> {
-
-        @Override
-        public Object read(JsonReader in) throws IOException {
-            JsonToken token = in.peek();
-            switch (token) {
-                case BEGIN_ARRAY:
-                    List<Object> list = Lists.newArrayList();
-                    in.beginArray();
-                    while (in.hasNext()) {
-                        list.add(read(in));
-                    }
-                    in.endArray();
-                    return list;
-
-                case BEGIN_OBJECT:
-                    Map<String, Object> map = new LinkedTreeMap<String, Object>();
-                    in.beginObject();
-                    while (in.hasNext()) {
-                        map.put(in.nextName(), read(in));
-                    }
-                    in.endObject();
-                    return map;
-
-                case STRING:
-                    return in.nextString();
-
-                case NUMBER:
-                    /**
-                     * 改写数字的处理逻辑，将数字值分为整型与浮点型。
-                     */
-                    double dbNum = in.nextDouble();
-
-                    // 数字超过long的最大值，返回浮点类型
-                    if (dbNum > Long.MAX_VALUE) {
-                        return dbNum;
-                    }
-
-                    // 判断数字是否为整数值
-                    long lngNum = (long) dbNum;
-                    if (dbNum == lngNum) {
-                        return lngNum;
-                    } else {
-                        return dbNum;
-                    }
-
-                case BOOLEAN:
-                    return in.nextBoolean();
-
-                case NULL:
-                    in.nextNull();
-                    return null;
-
-                default:
-                    throw new IllegalStateException();
-            }
-        }
-
-        @Override
-        public void write(JsonWriter out, Object value) throws IOException {
-            // 序列化无需实现
-        }
-
     }
 }
