@@ -14,10 +14,10 @@ import java.lang.annotation.*;
 @Documented
 public @interface Logger {
     /** 日志名 */
-    String value();
+    String value() default "";
 
     /** 耗时阀值 */
-    int elapsed();
+    int elapsed() default 1000;
 
     /** 采样机率:sample/10000 */
     int sample() default 1;

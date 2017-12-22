@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.LoggerFactory;
 import org.springframework.ext.common.helper.JsonHelper;
+import org.springframework.ext.common.setting.Context;
 import org.springframework.ext.module.result.ResultSupport;
 
 import java.lang.reflect.Method;
@@ -93,6 +94,10 @@ public class LoggerAspect {
             // 符合采样频率条件
             else if (random.nextInt(loggerAnnotation.basic()) <= loggerAnnotation.sample()) {
                 logger.warn(String.format("sample@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), loggerAnnotation.elapsed(), elapsed, JsonHelper.toJson(result)));
+            }
+            // debug日志
+            else if (Context.debug()) {
+                logger.warn(String.format("debug@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), loggerAnnotation.elapsed(), elapsed, JsonHelper.toJson(result)));
             }
             // 其他（未超时、未采用命中），不打印日志
             return;
