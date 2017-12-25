@@ -3,10 +3,10 @@ package org.springframework.ext.common.exception;
 import org.springframework.ext.common.object.Status;
 
 /**
- * Created by didi on 2017/7/10.
+ * Created by only on 2017/7/10.
  */
 public class NestedRuntimeException extends RuntimeException {
-    static final String SPLIT = ":";
+    static final String SPLIT = "/";
 
     public NestedRuntimeException(Throwable cause) {
         super(cause);

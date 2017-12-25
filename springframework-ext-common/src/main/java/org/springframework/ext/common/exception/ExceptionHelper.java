@@ -7,6 +7,8 @@ import org.springframework.ext.common.object.Status;
  * Created by only on 2017/3/13.
  */
 public class ExceptionHelper {
+    protected static final String SPLIT = NestedRuntimeException.SPLIT;
+
     public static NestedRuntimeException throwNotCatchException(Status status) {
         return throwException(status.getStatus(), status.getCode(), status.getMsg());
     }
@@ -45,7 +47,7 @@ public class ExceptionHelper {
         String message = errorMessage;
 
         if (StringUtils.isNotBlank(errorMessage)) {
-            final String[] strings = StringUtils.split(errorMessage, "/");
+            final String[] strings = StringUtils.split(errorMessage, SPLIT);
 
             if (strings != null && strings.length == 3) {
                 status = Integer.valueOf(strings[0]);
