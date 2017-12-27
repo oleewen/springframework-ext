@@ -20,22 +20,21 @@ import java.util.Random;
  * 性能分析AOP切面：拦截有Profiler注解的方法，进行性能分析
  * <pre>
  * @Aspect
- * public class ProfilerAspect extend ProfilerAround {
- *      @Pointcut("execution(* com.company.department.business.appname.*.*(..))" && @annotation(org.springframework.ext.common.aspect.Profiler))
- *      public void profilerPoint() {
- *      }
- * }
- *
- * @Configuration
- * @EnableAspectJAutoProxy
- * @ComponentScan
- * public class SpringConfig {
- *
- *      @Bean
- *      public ProfilerAspect profilerAspect() {
- *          return new ProfilerAspect();
- *      }
- * }
+ public class ProfilerAspect extend ProfilerAround {
+      @Pointcut("execution(* com.company.department.business.appname.*.*(..))" && @annotation(org.springframework.ext.common.aspect.Profiler))
+      public void profilerPoint() {
+      }
+ }
+
+ @Configuration
+ @EnableAspectJAutoProxy
+ @ComponentScan
+ public class SpringConfig {
+      @Bean
+      public ProfilerAspect profilerAspect() {
+          return new ProfilerAspect();
+      }
+ }
  * </pre>
  * @author only
  * @date 2014-07-14

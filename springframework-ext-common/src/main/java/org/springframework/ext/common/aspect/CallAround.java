@@ -17,23 +17,23 @@ import java.util.Random;
 /**
  * 日志切面
  * <pre>
- * @Aspect
- * public class CallAspect extends CallAround {
- *      @Pointcut("execution(* com.company.department.business.appname.*.*(..)) && @annotation(org.springframework.ext.common.aspect.Call)")
- *      public void callPoint() {
- *      }
- * }
- *
- * @Configuration
- * @EnableAspectJAutoProxy
- * @ComponentScan
- * public class SpringConfig {
- *      @Bean
- *      public CallAspect callAspect() {
- *          return new CallAspect();
- *      }
- *
- * }
+ @Aspect
+ public class CallAspect extends CallAround {
+      @Pointcut("execution(* com.company.department.business.appname.*.*(..)) && @annotation(org.springframework.ext.common.aspect.Call)")
+      public void callPoint() {
+      }
+ }
+
+ @Configuration
+ @EnableAspectJAutoProxy
+ @ComponentScan
+ public class SpringConfig {
+      @Bean
+      public CallAspect callAspect() {
+          return new CallAspect();
+      }
+
+ }
  * </pre>
  *
  * @author only
