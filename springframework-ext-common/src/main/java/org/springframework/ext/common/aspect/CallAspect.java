@@ -19,7 +19,7 @@ import java.util.Random;
  * <pre>
  * @Aspect
  * public class SpringAspect {
- *      @Pointcut("execution(* com.company.department.business.appname.*.*(..))" && @annotation(org.springframework.ext.common.aspect.Logger))
+ *      @Pointcut("execution(* com.company.department.business.appname.*.*(..))" && @annotation(org.springframework.ext.common.aspect.Call))
  *      public void loggerPoint() {
  *      }
  * }
@@ -34,8 +34,8 @@ import java.util.Random;
  *      }
  *
  *      @Bean
- *      public LoggerAspect loggerAspect() {
- *          return new ProfilerAspect();
+ *      public CallAspect callAspect() {
+ *          return new CallAspect();
  *      }
  * }
  * </pre>
@@ -44,7 +44,7 @@ import java.util.Random;
  * @date 2015-07-14
  */
 @Aspect
-public class LoggerAspect {
+public class CallAspect {
     /** 随机采样频率 */
     private static Random random = new Random();
 
@@ -59,7 +59,7 @@ public class LoggerAspect {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
 
-        org.springframework.ext.common.aspect.Logger logger = method.getAnnotation(org.springframework.ext.common.aspect.Logger.class);
+        Call call = method.getAnnotation(Call.class);
 
         long start = System.currentTimeMillis();
 
@@ -70,34 +70,34 @@ public class LoggerAspect {
 
             long end = System.currentTimeMillis();
             // 有@Logger注解
-            if (logger != null) {
+            if (call != null) {
                 // 打印日志
-                logger(logger, joinPoint.getArgs(), end - start, result);
+                logger(call, joinPoint.getArgs(), end - start, result);
             }
         } catch (Throwable e) {
             long end = System.currentTimeMillis();
             // 打印日志
-            error(logger, joinPoint.getArgs(), end - start, e);
+            error(call, joinPoint.getArgs(), end - start, e);
         }
         return result;
     }
 
-    private void logger(Logger loggerAnnotation, Object[] args, long elapsed, Object result) {
-        org.slf4j.Logger logger = LoggerFactory.getLogger(loggerAnnotation.value());
+    private void logger(Call call, Object[] args, long elapsed, Object result) {
+        org.slf4j.Logger logger = LoggerFactory.getLogger(call.value());
 
         // 调用成功
         if (isSuccess(result)) {
             // 超时，打印日志
-            if (elapsed > loggerAnnotation.elapsed()) {
-                logger.warn(String.format("timeout@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), loggerAnnotation.elapsed(), elapsed, JsonHelper.toJson(result)));
+            if (elapsed > call.elapsed()) {
+                logger.warn(String.format("timeout@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
             }
             // 符合采样频率条件
-            else if (random.nextInt(loggerAnnotation.basic()) <= loggerAnnotation.sample()) {
-                logger.warn(String.format("sample@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), loggerAnnotation.elapsed(), elapsed, JsonHelper.toJson(result)));
+            else if (random.nextInt(call.basic()) <= call.sample()) {
+                logger.warn(String.format("sample@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
             }
             // debug日志
             else if (Context.debug()) {
-                logger.warn(String.format("debug@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), loggerAnnotation.elapsed(), elapsed, JsonHelper.toJson(result)));
+                logger.warn(String.format("debug@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
             }
             // 其他（未超时、未采用命中），不打印日志
             return;
@@ -107,7 +107,7 @@ public class LoggerAspect {
         logger.warn(String.format("access@args:%s;duration:%d,success:false,result:%s", JsonHelper.toJson(args), elapsed, JsonHelper.toJson(result)));
     }
 
-    private boolean isSuccess(Object result) {
+    protected boolean isSuccess(Object result) {
         if (result != null) {
             if (result instanceof ResultSupport) {
                 return ((ResultSupport) result).isSuccess();
@@ -117,9 +117,9 @@ public class LoggerAspect {
         return false;
     }
 
-    private void error(Logger loggerAnnotation, Object[] args, long elapsed, Throwable e) {
-        org.slf4j.Logger logger = LoggerFactory.getLogger(StringUtils.defaultIfBlank(loggerAnnotation.value(), LoggerAspect.class.getName()));
+    private void error(Call callAnnotation, Object[] args, long elapsed, Throwable e) {
+        org.slf4j.Logger logger = LoggerFactory.getLogger(StringUtils.defaultIfBlank(callAnnotation.value(), CallAspect.class.getName()));
 
-        logger.error(String.format("exception@args:%s,elapsed:%d;duration:%d", JsonHelper.toJson(args), ObjectUtils.defaultIfNull(loggerAnnotation.elapsed(), 0), elapsed), e);
+        logger.error(String.format("exception@args:%s,elapsed:%d;duration:%d", JsonHelper.toJson(args), ObjectUtils.defaultIfNull(callAnnotation.elapsed(), 0), elapsed), e);
     }
 }

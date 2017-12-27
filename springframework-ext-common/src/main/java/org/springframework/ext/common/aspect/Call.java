@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-public @interface Logger {
+public @interface Call {
     /** 日志名 */
     String value() default "";
 
