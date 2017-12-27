@@ -29,7 +29,7 @@ import java.util.Random;
  * @ComponentScan
  * public class SpringConfig {
  *      @Bean
- *      public CallAspect callAspect()() {
+ *      public CallAspect callAspect() {
  *          return new CallAspect();
  *      }
  *
