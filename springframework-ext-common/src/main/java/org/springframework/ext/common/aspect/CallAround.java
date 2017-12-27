@@ -4,8 +4,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ext.common.helper.JsonHelper;
 import org.springframework.ext.common.setting.Context;
@@ -18,9 +18,9 @@ import java.util.Random;
  * 日志切面
  * <pre>
  * @Aspect
- * public class SpringAspect {
- *      @Pointcut("execution(* com.company.department.business.appname.*.*(..))" && @annotation(org.springframework.ext.common.aspect.Call))
- *      public void loggerPoint() {
+ * public class CallAspect extends CallAround {
+ *      @Pointcut("execution(* com.company.department.business.appname.*.*(..)) && @annotation(org.springframework.ext.common.aspect.Call)")
+ *      public void callPoint() {
  *      }
  * }
  *
@@ -29,22 +29,17 @@ import java.util.Random;
  * @ComponentScan
  * public class SpringConfig {
  *      @Bean
- *      public SpringAspect springAspect() {
- *          return new SpringAspect();
- *      }
- *
- *      @Bean
- *      public CallAspect callAspect() {
+ *      public CallAspect callAspect()() {
  *          return new CallAspect();
  *      }
+ *
  * }
  * </pre>
  *
  * @author only
  * @date 2015-07-14
  */
-@Aspect
-public class CallAspect {
+public class CallAround {
     /** 随机采样频率 */
     private static Random random = new Random();
 
@@ -53,8 +48,8 @@ public class CallAspect {
      *
      * @param joinPoint 连接点
      */
-    @Around("loggerPoint()")
-    public Object profile(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around("callPoint()")
+    public Object call(ProceedingJoinPoint joinPoint) throws Throwable {
         // 方法签名
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
@@ -83,7 +78,7 @@ public class CallAspect {
     }
 
     private void logger(Call call, Object[] args, long elapsed, Object result) {
-        org.slf4j.Logger logger = LoggerFactory.getLogger(call.value());
+        Logger logger = LoggerFactory.getLogger(call.value());
 
         // 调用成功
         if (isSuccess(result)) {
@@ -117,9 +112,9 @@ public class CallAspect {
         return false;
     }
 
-    private void error(Call callAnnotation, Object[] args, long elapsed, Throwable e) {
-        org.slf4j.Logger logger = LoggerFactory.getLogger(StringUtils.defaultIfBlank(callAnnotation.value(), CallAspect.class.getName()));
+    private void error(Call call, Object[] args, long elapsed, Throwable e) {
+        Logger logger = LoggerFactory.getLogger(StringUtils.defaultIfBlank(call.value(), CallAround.class.getName()));
 
-        logger.error(String.format("exception@args:%s,elapsed:%d;duration:%d", JsonHelper.toJson(args), ObjectUtils.defaultIfNull(callAnnotation.elapsed(), 0), elapsed), e);
+        logger.error(String.format("exception@args:%s,elapsed:%d;duration:%d", JsonHelper.toJson(args), ObjectUtils.defaultIfNull(call.elapsed(), 0), elapsed), e);
     }
 }

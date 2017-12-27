@@ -4,7 +4,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,7 @@ import java.util.Random;
  * 性能分析AOP切面：拦截有Profiler注解的方法，进行性能分析
  * <pre>
  * @Aspect
- * public class SpringAspect {
+ * public class ProfilerAspect extend ProfilerAround {
  *      @Pointcut("execution(* com.company.department.business.appname.*.*(..))" && @annotation(org.springframework.ext.common.aspect.Profiler))
  *      public void profilerPoint() {
  *      }
@@ -31,10 +30,6 @@ import java.util.Random;
  * @EnableAspectJAutoProxy
  * @ComponentScan
  * public class SpringConfig {
- *      @Bean
- *      public SpringAspect springAspect() {
- *          return new SpringAspect();
- *      }
  *
  *      @Bean
  *      public ProfilerAspect profilerAspect() {
@@ -45,10 +40,9 @@ import java.util.Random;
  * @author only
  * @date 2014-07-14
  */
-@Aspect
-public class ProfilerAspect {
+public class ProfilerAround {
     /** 日志对象 */
-    private static Logger logger = LoggerFactory.getLogger(ProfilerAspect.class);
+    private static Logger logger = LoggerFactory.getLogger(ProfilerAround.class);
     /** 随机采样频率 */
     private static Random random = new Random();
     /** 是否有方法超时 */
