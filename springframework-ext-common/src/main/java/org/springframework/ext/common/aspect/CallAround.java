@@ -1,6 +1,5 @@
 package org.springframework.ext.common.aspect;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -68,18 +67,20 @@ public class CallAround {
             // 有@Logger注解
             if (call != null) {
                 // 打印日志
-                logger(call, joinPoint.getArgs(), end - start, result);
+                logger(joinPoint, call, end - start, result);
             }
         } catch (Throwable e) {
             long end = System.currentTimeMillis();
             // 打印日志
-            error(call, joinPoint.getArgs(), end - start, e);
+            error(joinPoint, call, end - start, e);
         }
         return result;
     }
 
-    private void logger(Call call, Object[] args, long elapsed, Object result) {
-        Logger logger = LoggerFactory.getLogger(call.value());
+    private void logger(ProceedingJoinPoint joinPoint, Call call, long elapsed, Object result) {
+        Logger logger = getLogger(joinPoint, call);
+
+        Object[] args = joinPoint.getArgs();
 
         // 调用成功
         if (isSuccess(result)) {
@@ -100,7 +101,7 @@ public class CallAround {
         }
 
         // 调用失败，访问日志
-        logger.warn(String.format("access@args:%s;duration:%d,success:false,result:%s", JsonHelper.toJson(args), elapsed, JsonHelper.toJson(result)));
+        logger.warn(String.format("access@args:%s,elapsed:%d;duration:%d,success:false,result:%s", JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
     }
 
     protected boolean isSuccess(Object result) {
@@ -113,11 +114,15 @@ public class CallAround {
         return false;
     }
 
-    private void error(Call call, Object[] args, long elapsed, Throwable t) {
-        Logger logger = LoggerFactory.getLogger(StringUtils.defaultIfBlank(call.value(), CallAround.class.getName()));
-
-        logger.error(String.format("exception@args:%s,elapsed:%d;duration:%d", JsonHelper.toJson(args), ObjectUtils.defaultIfNull(call.elapsed(), 0), elapsed), t);
-
+    private void error(ProceedingJoinPoint joinPoint, Call call, long elapsed, Throwable t) {
+        Logger logger = getLogger(joinPoint, call);
+        // 记录异常日志
+        logger.error(String.format("exception@args:%s,elapsed:%d;duration:%d", JsonHelper.toJson(joinPoint.getArgs()), call.elapsed(), elapsed), t);
+        // 重新抛出异常
         throw ExceptionHelper.throwException(t);
+    }
+
+    private Logger getLogger(ProceedingJoinPoint joinPoint, Call call) {
+        return LoggerFactory.getLogger(StringUtils.defaultIfBlank(call.value(), joinPoint.getClass().getName()));
     }
 }
