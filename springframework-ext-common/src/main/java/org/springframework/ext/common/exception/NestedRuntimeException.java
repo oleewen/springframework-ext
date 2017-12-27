@@ -8,24 +8,16 @@ import org.springframework.ext.common.object.Status;
 public class NestedRuntimeException extends RuntimeException {
     static final String SPLIT = "/";
 
-    public NestedRuntimeException(Throwable cause) {
-        super(cause);
-    }
-
-    public NestedRuntimeException(String message) {
-        super(message);
-    }
-
-    public NestedRuntimeException(int status, String errorCode, String errorMessage) {
-        this(status + SPLIT + errorCode + SPLIT + errorMessage);
-    }
-
     public NestedRuntimeException(Status status) {
         this(status.getStatus(), status.getCode(), status.getMsg());
     }
 
-    public NestedRuntimeException(Status status, Object... format) {
-        this(status.getStatus(), status.getCode(), String.format(status.getMsg(), format));
+    public NestedRuntimeException(Status status, Throwable cause) {
+        super(status.getStatus() + SPLIT + status.getCode() + status.getMsg(), cause);
+    }
+
+    private NestedRuntimeException(int status, String errorCode, String errorMessage) {
+        super(status + SPLIT + errorCode + SPLIT + errorMessage);
     }
 
     public int getStatus() {

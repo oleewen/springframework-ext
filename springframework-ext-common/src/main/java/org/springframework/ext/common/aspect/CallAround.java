@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ext.common.exception.ExceptionHelper;
 import org.springframework.ext.common.helper.JsonHelper;
 import org.springframework.ext.common.setting.Context;
 import org.springframework.ext.module.result.ResultSupport;
@@ -112,9 +113,11 @@ public class CallAround {
         return false;
     }
 
-    private void error(Call call, Object[] args, long elapsed, Throwable e) {
+    private void error(Call call, Object[] args, long elapsed, Throwable t) {
         Logger logger = LoggerFactory.getLogger(StringUtils.defaultIfBlank(call.value(), CallAround.class.getName()));
 
-        logger.error(String.format("exception@args:%s,elapsed:%d;duration:%d", JsonHelper.toJson(args), ObjectUtils.defaultIfNull(call.elapsed(), 0), elapsed), e);
+        logger.error(String.format("exception@args:%s,elapsed:%d;duration:%d", JsonHelper.toJson(args), ObjectUtils.defaultIfNull(call.elapsed(), 0), elapsed), t);
+
+        throw ExceptionHelper.throwException(t);
     }
 }

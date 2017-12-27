@@ -9,24 +9,50 @@ import org.springframework.ext.common.object.Status;
 public class ExceptionHelper {
     protected static final String SPLIT = NestedRuntimeException.SPLIT;
 
+    public static NestedRuntimeException throwNotCatchException(String errorMessage) {
+        Status status = parseErrorMessage(errorMessage);
+        return throwNotCatchException(status);
+    }
+
+    public static NestedRuntimeException throwNotCatchException(Throwable t) {
+        return throwNotCatchException(t.getMessage(), t);
+    }
+
+    public static NestedRuntimeException throwNotCatchException(String errorMessage, Throwable t) {
+        Status status = parseErrorMessage(errorMessage);
+        throw new NotCatchRuntimeException(status, t);
+    }
+
     public static NestedRuntimeException throwNotCatchException(Status status) {
-        return throwException(status.getStatus(), status.getCode(), status.getMsg());
+        return new NotCatchRuntimeException(status);
     }
 
     public static NestedRuntimeException throwNotCatchException(String errorCode, String message) {
-        return throwException(-9999, errorCode, message);
+        return throwNotCatchException(-9999, errorCode, message);
     }
 
     public static NestedRuntimeException throwNotCatchException(int status, String errorCode, String message) {
-        throw new NotCatchRuntimeException(status, errorCode, message);
+        Status statusEnum = parseErrorMessage(status + SPLIT + errorCode + SPLIT + message);
+
+        return throwNotCatchException(statusEnum);
     }
 
-    public static NestedRuntimeException throwNotCatchException(String errorMessage) {
-        return throwNotCatchException(parseErrorMessage(errorMessage));
+    public static NestedRuntimeException throwException(String errorMessage) {
+        Status status = parseErrorMessage(errorMessage);
+        return throwException(status);
+    }
+
+    public static NestedRuntimeException throwException(Throwable t) {
+        return throwException(t.getMessage(), t);
+    }
+
+    public static NestedRuntimeException throwException(String errorMessage, Throwable t) {
+        Status status = parseErrorMessage(errorMessage);
+        throw new NestedRuntimeException(status, t);
     }
 
     public static NestedRuntimeException throwException(Status status) {
-        return throwException(status.getStatus(), status.getCode(), status.getMsg());
+        return new NestedRuntimeException(status);
     }
 
     public static NestedRuntimeException throwException(String errorCode, String message) {
@@ -34,11 +60,9 @@ public class ExceptionHelper {
     }
 
     public static NestedRuntimeException throwException(int status, String errorCode, String message) {
-        throw new NestedRuntimeException(status, errorCode, message);
-    }
+        Status statusEnum = parseErrorMessage(status + SPLIT + errorCode + SPLIT + message);
 
-    public static NestedRuntimeException throwException(String errorMessage) {
-        return throwException(parseErrorMessage(errorMessage));
+        return throwException(statusEnum);
     }
 
     public static Status parseErrorMessage(final String errorMessage) {
@@ -89,8 +113,13 @@ public class ExceptionHelper {
     }
 
     public static class NotCatchRuntimeException extends NestedRuntimeException {
-        public NotCatchRuntimeException(int status, String errorCode, String message) {
-            super(status, errorCode, message);
+
+        public NotCatchRuntimeException(Status status) {
+            super(status);
+        }
+
+        public NotCatchRuntimeException(Status status, Throwable cause) {
+            super(status, cause);
         }
     }
 }
