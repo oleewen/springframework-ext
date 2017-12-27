@@ -110,7 +110,7 @@ public class ProfilerAround {
     private void logger(org.springframework.ext.common.aspect.Profiler profiler) {
         // 整体超时或者中间步骤超时，打印性能日志
         if (Profiler.getDuration() > profiler.elapsed() || Boolean.TRUE.equals(timeout.get())) {
-            logger.warn(String.format("timeout@elapsed:%d,duration:%d,profile:%s", profiler.elapsed(), Profiler.getDuration(), Profiler.dump()));
+            logger.error(String.format("timeout@elapsed:%d,duration:%d,profile:%s", profiler.elapsed(), Profiler.getDuration(), Profiler.dump()));
         }
         // 或者符合采样频率条件
         else if (random.nextInt(profiler.basic()) <= profiler.sample()) {

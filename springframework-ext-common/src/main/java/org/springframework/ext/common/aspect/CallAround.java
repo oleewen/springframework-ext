@@ -84,7 +84,7 @@ public class CallAround {
         if (isSuccess(result)) {
             // 超时，打印日志
             if (elapsed > call.elapsed()) {
-                logger.warn(String.format("timeout@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
+                logger.error(String.format("timeout@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
             }
             // 符合采样频率条件
             else if (random.nextInt(call.basic()) <= call.sample()) {
