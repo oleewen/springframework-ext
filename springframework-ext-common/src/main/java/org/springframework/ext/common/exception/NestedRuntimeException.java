@@ -3,7 +3,8 @@ package org.springframework.ext.common.exception;
 import org.springframework.ext.common.object.Status;
 
 /**
- * Created by only on 2017/7/10.
+ * @author only
+ * @date 2017/7/10.
  */
 public class NestedRuntimeException extends RuntimeException {
     static final String SPLIT = "/";
@@ -12,12 +13,16 @@ public class NestedRuntimeException extends RuntimeException {
         this(status.getStatus(), status.getCode(), status.getMsg());
     }
 
-    public NestedRuntimeException(Status status, Throwable cause) {
-        super(status.getStatus() + SPLIT + status.getCode() + status.getMsg(), cause);
+    public NestedRuntimeException(Status status, Throwable throwable) {
+        this(status.getStatus(), status.getCode(), status.getMsg(), throwable);
     }
 
-    private NestedRuntimeException(int status, String errorCode, String errorMessage) {
+    public NestedRuntimeException(int status, String errorCode, String errorMessage) {
         super(status + SPLIT + errorCode + SPLIT + errorMessage);
+    }
+
+    public NestedRuntimeException(int status, String errorCode, String errorMessage, Throwable throwable) {
+        super(status + SPLIT + errorCode + SPLIT + errorMessage, throwable);
     }
 
     public int getStatus() {
