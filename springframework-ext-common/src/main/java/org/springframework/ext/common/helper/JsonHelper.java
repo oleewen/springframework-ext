@@ -33,11 +33,8 @@ public abstract class JsonHelper {
      * @return json字符串
      */
     public static <T> String toJson(T object) {
-
-        if (StringUtils.isNotEmpty("")) {
-        }
         if (object == null) {
-            return "null";
+            return "";
         }
 
         // 默认用gson序列化方式
