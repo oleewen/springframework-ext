@@ -1,5 +1,6 @@
 package org.springframework.ext.common.helper;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
@@ -107,7 +108,37 @@ public abstract class JsonHelper {
     }
 
     /**
-     * 将json字符串转为List类型的集合
+     * 将json字符串转为Map类型的集合
+     *
+     * @param json  字符串json数据
+     * @param <K,V> 泛型
+     * @return Map类型的集合
+     */
+    public static <K, V> Map<K, V> fromJsonMap(String json, Class<V> clazz) {
+        if (StringUtils.isBlank(json)) {
+            return Collections.emptyMap();
+        } else {
+            Type type = new TypeToken<Map<K, JsonPrimitive>>() {
+            }.getType();
+
+            Map<K, JsonPrimitive> result = gson.fromJson(json, type);
+
+
+            Map<K, V> map = Maps.newHashMap();
+
+            Set<Map.Entry<K, JsonPrimitive>> entrySet = result.entrySet();
+            for (Map.Entry<K, JsonPrimitive> entry : entrySet) {
+                K key = entry.getKey();
+                V value = gson.fromJson(entry.getValue(), clazz);
+                map.put(key, value);
+            }
+
+            return map;
+        }
+    }
+
+    /**
+     * 将json字符串转为List类型的集合，T不支持Number类型，Number类型请使用fromJsonList(json, clazz)
      *
      * @param json 字符串json数据
      * @param <T>  泛型
@@ -119,6 +150,30 @@ public abstract class JsonHelper {
         } else {
             return fromJson(json, new TypeToken<List<T>>() {
             }.getType());
+        }
+    }
+
+    /**
+     * 将json字符串转为List类型的集合
+     *
+     * @param json 字符串json数据
+     * @param <T>  泛型
+     * @return List类型的集合
+     */
+    public static <T> List<T> fromJsonList(String json, Class<T> clazz) {
+        if (StringUtils.isBlank(json)) {
+            return Collections.emptyList();
+        } else {
+            Type type = new TypeToken<List<JsonPrimitive>>() {
+            }.getType();
+            List<JsonPrimitive> list = gson.fromJson(json, type);
+
+            List<T> listOfT = Lists.newArrayListWithExpectedSize(list.size());
+            for (JsonPrimitive jsonObj : list) {
+                listOfT.add(gson.fromJson(jsonObj, clazz));
+            }
+
+            return listOfT;
         }
     }
 
