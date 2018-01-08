@@ -19,7 +19,7 @@ import java.util.Random;
 /**
  * 性能分析AOP切面：拦截有Profiler注解的方法，进行性能分析
  * <pre>
- * @Aspect
+ @Aspect
  public class ProfilerAspect extend ProfilerAround {
       @Pointcut("execution(* com.company.department.business.appname.*.*(..))" && @annotation(org.springframework.ext.common.aspect.Profiler))
       public void profilerPoint() {

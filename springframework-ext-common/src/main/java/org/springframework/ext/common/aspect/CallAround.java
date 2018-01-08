@@ -97,6 +97,9 @@ public class CallAround {
                 logger.warn(String.format("debug@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
             }
             // 其他（未超时、未采用命中），不打印日志
+            else {
+                otherCase(joinPoint, call, elapsed, result);
+            }
             return;
         }
 
@@ -112,6 +115,9 @@ public class CallAround {
             return true;
         }
         return false;
+    }
+
+    protected void otherCase(ProceedingJoinPoint joinPoint, Call call, long elapsed, Object result) {
     }
 
     private void error(ProceedingJoinPoint joinPoint, Call call, long elapsed, Throwable t) {
