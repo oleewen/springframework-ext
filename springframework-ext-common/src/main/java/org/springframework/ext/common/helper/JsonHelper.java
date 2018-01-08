@@ -1,15 +1,20 @@
 package org.springframework.ext.common.helper;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.ext.common.exception.ExceptionHelper;
 
-import java.lang.reflect.Type;
-import java.text.ParseException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 文件描述：Json处理辅助类
@@ -18,13 +23,15 @@ import java.util.*;
  * @since 2014/12/9.
  */
 public abstract class JsonHelper {
-    /** builder */
-    private static final GsonBuilder builder = new GsonBuilder()
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeAdapter(Date.class, new DateFormatter())
-            .disableHtmlEscaping();
-    /** json处理器 */
-    private static Gson gson = builder.create();
+    /** json mapper */
+    private static ObjectMapper mapper = new ObjectMapper();
+
+    static {
+        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
 
     /**
      * 将object对象转为json字符串
@@ -37,9 +44,11 @@ public abstract class JsonHelper {
         if (object == null) {
             return "";
         }
-
-        // 默认用gson序列化方式
-        return gson.toJson(object);
+        try {
+            return mapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw ExceptionHelper.throwException(e);
+        }
     }
 
     /**
@@ -54,102 +63,31 @@ public abstract class JsonHelper {
         if (StringUtils.isBlank(json)) {
             return null;
         }
-
-        // 默认用gson反序列化
-        return gson.fromJson(json, clazz);
-    }
-
-    /**
-     * 将json字符串转为type类型的java对象
-     *
-     * @param json 字符串json数据
-     * @param type 类型
-     * @param <T>  泛型
-     * @return type类型的java对象
-     */
-    public static <T> T fromJson(String json, Type type) {
-        if (StringUtils.isBlank(json)) {
-            return null;
-        }
-
-        // 默认用gson反序列化
-        return gson.fromJson(json, type);
-    }
-
-    /**
-     * 将json字符串转为Map类型的集合
-     *
-     * @param json  字符串json数据
-     * @param <K,V> 泛型
-     * @return Map类型的集合
-     */
-    public static <K, V> Map<K, V> fromJsonMap(String json) {
-        if (StringUtils.isBlank(json)) {
-            return Collections.emptyMap();
-        } else {
-            Type type = new TypeToken<Map<K, V>>() {
-            }.getType();
-
-            Gson gson = builder.registerTypeAdapter(type,
-                    (JsonDeserializer<Map<K, V>>) (jsonElement, typeOf, context) -> {
-
-                        Map<K, V> map = Maps.newHashMap();
-                        JsonObject jsonObject = jsonElement.getAsJsonObject();
-                        Set<Map.Entry<String, JsonElement>> entrySet = jsonObject.entrySet();
-                        for (Map.Entry<String, JsonElement> entry : entrySet) {
-                            map.put((K) entry.getKey(), (V) entry.getValue());
-                        }
-                        return map;
-                    })
-                    .create();
-
-            return gson.fromJson(json, type);
+        try {
+            return mapper.readValue(json, clazz);
+        } catch (IOException e) {
+            throw ExceptionHelper.throwException(e);
         }
     }
 
     /**
      * 将json字符串转为Map类型的集合
      *
-     * @param json  字符串json数据
-     * @param <K,V> 泛型
+     * @param json 字符串json数据
+     * @param <K,  V> 泛型
      * @return Map类型的集合
      */
-    public static <K, V> Map<K, V> fromJsonMap(String json, Class<V> clazz) {
+    public static <K, V> Map<K, V> fromJsonMap(String json, Class<K> clazzK, Class<V> clazzV) {
         if (StringUtils.isBlank(json)) {
             return Collections.emptyMap();
-        } else {
-            Type type = new TypeToken<Map<K, JsonPrimitive>>() {
-            }.getType();
-
-            Map<K, JsonPrimitive> result = gson.fromJson(json, type);
-
-
-            Map<K, V> map = Maps.newHashMap();
-
-            Set<Map.Entry<K, JsonPrimitive>> entrySet = result.entrySet();
-            for (Map.Entry<K, JsonPrimitive> entry : entrySet) {
-                K key = entry.getKey();
-                V value = gson.fromJson(entry.getValue(), clazz);
-                map.put(key, value);
-            }
-
-            return map;
         }
-    }
 
-    /**
-     * 将json字符串转为List类型的集合，T不支持Number类型，Number类型请使用fromJsonList(json, clazz)
-     *
-     * @param json 字符串json数据
-     * @param <T>  泛型
-     * @return List类型的集合
-     */
-    public static <T> List<T> fromJsonList(String json) {
-        if (StringUtils.isBlank(json)) {
-            return Collections.emptyList();
-        } else {
-            return fromJson(json, new TypeToken<List<T>>() {
-            }.getType());
+        JavaType javaType = mapper.getTypeFactory().constructParametricType(HashMap.class, clazzK, clazzV);
+
+        try {
+            return mapper.readValue(json, javaType);
+        } catch (IOException e) {
+            throw ExceptionHelper.throwException(e);
         }
     }
 
@@ -163,37 +101,13 @@ public abstract class JsonHelper {
     public static <T> List<T> fromJsonList(String json, Class<T> clazz) {
         if (StringUtils.isBlank(json)) {
             return Collections.emptyList();
-        } else {
-            Type type = new TypeToken<List<JsonPrimitive>>() {
-            }.getType();
-            List<JsonPrimitive> list = gson.fromJson(json, type);
-
-            List<T> listOfT = Lists.newArrayListWithExpectedSize(list.size());
-            for (JsonPrimitive jsonObj : list) {
-                listOfT.add(gson.fromJson(jsonObj, clazz));
-            }
-
-            return listOfT;
         }
-    }
+        JavaType javaType = mapper.getTypeFactory().constructParametricType(List.class, clazz);
 
-    // 日志格式化
-    private static class DateFormatter implements JsonDeserializer<Date> {
-        private static final String[] DATE_FORMATS = new String[]{
-                "yyyy-MM-dd HH:mm:ss",
-                "yyyy-MM-dd",
-                "yyyy/MM/dd"
-        };
-
-        @Override
-        public Date deserialize(JsonElement jsonElement, Type typeOF, JsonDeserializationContext context) throws JsonParseException {
-            for (String format : DATE_FORMATS) {
-                try {
-                    return new SimpleDateFormat(format).parse(jsonElement.getAsString());
-                } catch (ParseException e) {
-                }
-            }
-            throw new JsonParseException("Unparseable date:\"" + jsonElement.getAsString() + "\". Supported formats: " + Arrays.toString(DATE_FORMATS));
+        try {
+            return mapper.readValue(json, javaType);
+        } catch (IOException e) {
+            throw ExceptionHelper.throwException(e);
         }
     }
 }

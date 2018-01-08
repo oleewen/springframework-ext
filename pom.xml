@@ -28,7 +28,7 @@
             <dependency>
                 <groupId>org.springframework.ext</groupId>
                 <artifactId>springframework-ext-common</artifactId>
-                <version>1.0.2-SNAPSHOT</version>
+                <version>1.0.3-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.ext</groupId>
@@ -49,10 +49,20 @@
                 <artifactId>guava</artifactId>
                 <version>RELEASE</version>
             </dependency>
-            <!-- gson -->
+            <!-- json -->
             <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
                 <version>RELEASE</version>
             </dependency>
             <!-- apache common -->
