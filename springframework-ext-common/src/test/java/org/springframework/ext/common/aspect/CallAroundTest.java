@@ -1,5 +1,6 @@
 package org.springframework.ext.common.aspect;
 
+import org.aspectj.lang.annotation.Aspect;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,8 +21,8 @@ import static org.junit.Assert.assertThat;
  * @date 2017-12-27
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = CallAspectTest.SpringConfig.class)
-public class CallAspectTest extends AbstractJUnit4SpringContextTests {
+@ContextConfiguration(classes = CallAroundTest.SpringConfig.class)
+public class CallAroundTest extends AbstractJUnit4SpringContextTests {
     @Resource
     private CallAspectTarget callAspectTarget;
 
@@ -38,6 +39,10 @@ public class CallAspectTest extends AbstractJUnit4SpringContextTests {
         public String callMethod(Long id, String key) {
             return id + key;
         }
+    }
+
+    @Aspect
+    public static class CallAspect extends CallAround {
     }
 
     @Configuration

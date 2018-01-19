@@ -3,7 +3,6 @@ package org.springframework.ext.common.aspect;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
@@ -19,6 +18,10 @@ import java.util.Random;
 /**
  * 日志切面
  * <pre>
+ @Aspect
+ public class CallAspect extends CallAround {
+ }
+
  @Configuration
  @EnableAspectJAutoProxy
  @ComponentScan
@@ -27,15 +30,13 @@ import java.util.Random;
       public CallAspect callAspect() {
           return new CallAspect();
       }
-
  }
  * </pre>
  *
  * @author only
  * @date 2015-07-14
  */
-@Aspect
-public class CallAspect {
+public class CallAround {
     /** 随机采样频率 */
     private static Random random = new Random();
 
@@ -69,7 +70,7 @@ public class CallAspect {
                 // 打印日志
                 logger(joinPoint, call, end - start, result);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             long end = System.currentTimeMillis();
             // 打印日志
             error(joinPoint, call, end - start, e);
@@ -121,7 +122,7 @@ public class CallAspect {
         // 下层复写，可支持访问日志打印
     }
 
-    private void error(ProceedingJoinPoint joinPoint, Call call, long elapsed, Throwable t) {
+    private void error(ProceedingJoinPoint joinPoint, Call call, long elapsed, Exception t) {
         Logger logger = getLogger(joinPoint, call);
         // 记录异常日志
         logger.error(String.format("exception@method:%s,args:%s,elapsed:%d;duration:%d", joinPoint.getSignature().toShortString(), JsonHelper.toJson(joinPoint.getArgs()), call.elapsed(), elapsed), t);
