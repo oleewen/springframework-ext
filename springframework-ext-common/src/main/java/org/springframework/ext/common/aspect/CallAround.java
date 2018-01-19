@@ -86,15 +86,15 @@ public class CallAround {
         if (isSuccess(result)) {
             // 超时，打印日志
             if (elapsed > call.elapsed()) {
-                logger.error(String.format("timeout@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
+                logger.error(String.format("timeout@method:%s,args:%s,elapsed:%d;duration:%d,result:%s", joinPoint.getSignature().toShortString(), JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
             }
             // 符合采样频率条件
             else if (random.nextInt(call.basic()) <= call.sample()) {
-                logger.warn(String.format("sample@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
+                logger.warn(String.format("sample@method:%s,args:%s,elapsed:%d;duration:%d,result:%s", joinPoint.getSignature().toShortString(), JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
             }
             // debug日志
             else if (Context.debug()) {
-                logger.warn(String.format("debug@args:%s,elapsed:%d;duration:%d,result:%s", JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
+                logger.warn(String.format("debug@method:%s,args:%s,elapsed:%d;duration:%d,result:%s", joinPoint.getSignature().toShortString(), JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
             }
             // 其他（未超时、未采用命中），不打印日志
             else {
@@ -104,7 +104,7 @@ public class CallAround {
         }
 
         // 调用失败，访问日志
-        logger.warn(String.format("access@args:%s,elapsed:%d;duration:%d,success:false,result:%s", JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
+        logger.warn(String.format("access@method:%s,args:%s,elapsed:%d;duration:%d,success:false,result:%s", joinPoint.getSignature().toShortString(), JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
     }
 
     protected boolean isSuccess(Object result) {
@@ -123,7 +123,7 @@ public class CallAround {
     private void error(ProceedingJoinPoint joinPoint, Call call, long elapsed, Throwable t) {
         Logger logger = getLogger(joinPoint, call);
         // 记录异常日志
-        logger.error(String.format("exception@args:%s,elapsed:%d;duration:%d", JsonHelper.toJson(joinPoint.getArgs()), call.elapsed(), elapsed), t);
+        logger.error(String.format("exception@method:%s,args:%s,elapsed:%d;duration:%d", joinPoint.getSignature().toShortString(), JsonHelper.toJson(joinPoint.getArgs()), call.elapsed(), elapsed), t);
         // 重新抛出异常
         throw ExceptionHelper.throwException(t);
     }
