@@ -104,7 +104,7 @@ public class CallAround {
         }
 
         // 调用失败，访问日志
-        logger.warn(String.format("access@method:%s,args:%s,elapsed:%d;duration:%d,success:false,result:%s", joinPoint.getSignature().toShortString(), JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
+        logger.warn(String.format("failure@method:%s,args:%s,elapsed:%d;duration:%d,success:false,result:%s", joinPoint.getSignature().toShortString(), JsonHelper.toJson(args), call.elapsed(), elapsed, JsonHelper.toJson(result)));
     }
 
     protected boolean isSuccess(Object result) {
@@ -118,6 +118,7 @@ public class CallAround {
     }
 
     protected void otherCase(ProceedingJoinPoint joinPoint, Call call, long elapsed, Object result) {
+        // 下层复写，可支持访问日志打印
     }
 
     private void error(ProceedingJoinPoint joinPoint, Call call, long elapsed, Throwable t) {
