@@ -3,6 +3,8 @@ package org.springframework.ext.common.aspect;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,13 +19,6 @@ import java.util.Random;
 /**
  * 日志切面
  * <pre>
- @Aspect
- public class CallAspect extends CallAround {
-      @Pointcut("execution(* com.company.department.business.appname.*.*(..)) && @annotation(org.springframework.ext.common.aspect.Call)")
-      public void callPoint() {
-      }
- }
-
  @Configuration
  @EnableAspectJAutoProxy
  @ComponentScan
@@ -39,9 +34,14 @@ import java.util.Random;
  * @author only
  * @date 2015-07-14
  */
-public class CallAround {
+@Aspect
+public class CallAspect {
     /** 随机采样频率 */
     private static Random random = new Random();
+
+    @Pointcut("@annotation(org.springframework.ext.common.aspect.Call)")
+    public void callPoint() {
+    }
 
     /**
      * profiler方法拦截

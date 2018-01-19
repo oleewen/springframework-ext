@@ -1,7 +1,5 @@
 package org.springframework.ext.common.aspect;
 
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,28 +23,20 @@ import static org.junit.Assert.assertThat;
 @ContextConfiguration(classes = CallAspectTest.SpringConfig.class)
 public class CallAspectTest extends AbstractJUnit4SpringContextTests {
     @Resource
-    private CallAspectClass callAspectClass;
+    private CallAspectTarget callAspectTarget;
 
     @Test
     public void call() throws Exception {
-        String actual = callAspectClass.callMethod(888888L, "spring");
+        String actual = callAspectTarget.callMethod(888888L, "spring");
 
         assertThat(actual, CoreMatchers.is("888888spring"));
     }
 
-    public static class CallAspectClass {
+    public static class CallAspectTarget {
 
         @Call
         public String callMethod(Long id, String key) {
             return id + key;
-        }
-    }
-
-    @Aspect
-    public static class CallAspect extends CallAround {
-
-        @Pointcut("execution(* org.springframework.ext.common.aspect.CallAspectTest.*.*(..)) && @annotation(org.springframework.ext.common.aspect.Call)")
-        public void callPoint() {
         }
     }
 
@@ -60,8 +50,8 @@ public class CallAspectTest extends AbstractJUnit4SpringContextTests {
         }
 
         @Bean
-        public CallAspectClass callAspectClass() {
-            return new CallAspectClass();
+        public CallAspectTarget callAspectClass() {
+            return new CallAspectTarget();
         }
     }
 }

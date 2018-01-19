@@ -4,6 +4,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +21,6 @@ import java.util.Random;
 /**
  * 性能分析AOP切面：拦截有Profiler注解的方法，进行性能分析
  * <pre>
- @Aspect
- public class ProfilerAspect extend ProfilerAround {
-      @Pointcut("execution(* com.company.department.business.appname.*.*(..))" && @annotation(org.springframework.ext.common.aspect.Profiler))
-      public void profilerPoint() {
-      }
- }
-
  @Configuration
  @EnableAspectJAutoProxy
  @ComponentScan
@@ -39,15 +34,20 @@ import java.util.Random;
  * @author only
  * @date 2014-07-14
  */
-public class ProfilerAround {
+@Aspect
+public class ProfilerAspect {
     /** 日志对象 */
-    private static Logger logger = LoggerFactory.getLogger(ProfilerAround.class);
+    private static Logger logger = LoggerFactory.getLogger(ProfilerAspect.class);
     /** 随机采样频率 */
     private static Random random = new Random();
     /** 是否有方法超时 */
     private ThreadLocal<Boolean> timeout = new ThreadLocal<Boolean>();
     /** 是否首次进入 */
     private ThreadLocal<Boolean> topFlag = new ThreadLocal<Boolean>();
+
+    @Pointcut("@annotation(org.springframework.ext.common.aspect.Profiler)")
+    public void profilerPoint() {
+    }
 
     /**
      * profiler方法拦截
