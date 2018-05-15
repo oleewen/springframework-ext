@@ -58,7 +58,7 @@ public class ProfilerAspect {
     public Object profile(ProceedingJoinPoint joinPoint) throws Throwable {
         // 方法签名
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        Method method = signature.getMethod();
+        Method method = joinPoint.getTarget().getClass().getDeclaredMethod(signature.getName(), signature.getMethod().getParameterTypes());
 
         org.springframework.ext.common.aspect.Profiler profiler = method.getAnnotation(org.springframework.ext.common.aspect.Profiler.class);
 
