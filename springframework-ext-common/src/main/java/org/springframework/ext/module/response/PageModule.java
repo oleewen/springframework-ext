@@ -2,10 +2,11 @@ package org.springframework.ext.module.response;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class PageModule<T> {
+public class PageModule<T> implements Serializable {
     private List<T> items;
     private Integer total;
     private Integer size;

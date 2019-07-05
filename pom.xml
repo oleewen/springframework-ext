@@ -4,7 +4,7 @@
 
     <groupId>org.springframework.ext</groupId>
     <artifactId>springframework-ext</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -18,22 +18,22 @@
             <dependency>
                 <groupId>org.springframework.ext</groupId>
                 <artifactId>springframework-ext-biz</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.4-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.ext</groupId>
                 <artifactId>springframework-ext-domain</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.4-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.ext</groupId>
                 <artifactId>springframework-ext-common</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.5-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.ext</groupId>
                 <artifactId>springframework-ext-client</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.4-SNAPSHOT</version>
             </dependency>
 
             <!-- spring -->
@@ -49,7 +49,13 @@
                 <artifactId>guava</artifactId>
                 <version>RELEASE</version>
             </dependency>
-            <!-- json -->
+            <!-- redisson -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson</artifactId>
+                <version>RELEASE</version>
+            </dependency>
+            <!-- jackson -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
@@ -145,4 +151,17 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>artifactory-main-releases</name>
+            <url>http://artifactory.intra.xiaojukeji.com:80/artifactory/libs-release</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>artifactory-main-snapshots</name>
+            <url>http://artifactory.intra.xiaojukeji.com:80/artifactory/libs-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>springframework-ext</artifactId>
         <groupId>org.springframework.ext</groupId>
-        <version>1.0.4-SNAPSHOT</version>
+        <version>1.0.5-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -32,6 +32,12 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <!-- redission -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>RELEASE</version>
         </dependency>
         <!-- apache common -->
         <dependency>
