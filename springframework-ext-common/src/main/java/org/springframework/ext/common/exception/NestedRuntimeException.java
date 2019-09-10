@@ -9,6 +9,9 @@ import org.springframework.ext.common.object.Status;
 public class NestedRuntimeException extends RuntimeException {
     static final String SPLIT = "/";
 
+    private NestedRuntimeException() {
+    }
+
     public NestedRuntimeException(Status status) {
         this(status.getStatus(), status.getCode(), status.getMsg());
     }
