@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ext.common.exception.ExceptionHelper;
+import org.springframework.ext.common.object.Jsonable;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -45,7 +46,11 @@ public abstract class JsonHelper {
             return "";
         }
         try {
-            return mapper.writeValueAsString(object);
+            Object obj = object;
+            if (object instanceof Jsonable) {
+                obj = ((Jsonable) object).toJson();
+            }
+            return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw ExceptionHelper.throwException(e);
         }

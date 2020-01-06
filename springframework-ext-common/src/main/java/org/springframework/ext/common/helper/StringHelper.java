@@ -1,7 +1,7 @@
 /**
  * taobao.com Inc. Copyright (c) 2009-2012 All Rights Reserved.
  */
-package org.springframework.ext.common.util;
+package org.springframework.ext.common.helper;
 
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +26,7 @@ import java.util.Map.Entry;
  *
  * @author only
  */
-public final class Utils {
+public final class StringHelper {
     /** byte字节最大值 */
     private static final int BYTE_MAX = 0xFF;
 
@@ -181,12 +181,12 @@ public final class Utils {
     }
 
     /**
-     * 将数据映射Map转换为字符串
+     * 将字符串按分隔符和连接符转换为数据映射Map
      *
-     * @param str       数据映射
+     * @param str       字符串
      * @param separate  分隔符
      * @param connector 连接符
-     * @return 字符串
+     * @return 映射Map
      */
     public static Map<String, String> str2map(String str, String separate, String connector) {
         if (StringUtils.isNotBlank(str)) {
@@ -241,7 +241,7 @@ public final class Utils {
     }
 
     /**
-     * 将数据映射Map转换为字符串
+     * 将字符串转换为数据映射Map
      *
      * @param dataMap   数据映射
      * @param separate  分隔符
@@ -276,19 +276,5 @@ public final class Utils {
      */
     public static String map2Str(Map<String, String> dataMap) {
         return map2Str(new HashMap<String, Object>(dataMap), StringConst.EMPTY, StringConst.EMPTY);
-    }
-
-    /**
-     * @param <T>      枚举类型
-     * @param enumType 枚举类型的class
-     * @return map
-     */
-    public static <T extends Enum<T>> Map<String, T> enum2Map(Class<T> enumType) {
-        Map<String, T> map = new HashMap<String, T>();
-        T[] enums = enumType.getEnumConstants();
-        for (T item : enums) {
-            map.put(item.name(), item);
-        }
-        return map;
     }
 }
