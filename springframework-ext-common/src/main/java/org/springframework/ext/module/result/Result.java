@@ -26,7 +26,7 @@ public class Result<T> implements ResultSupport<T> {
     /** 状态消息 */
     private String message;
     /** 淘宝/tmall商品或店铺的返利信息;外网B2C商品或活动的返利信息 */
-    private T data;
+    private T module;
 
     /** 构造函数 */
     public Result() {
