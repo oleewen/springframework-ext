@@ -98,17 +98,17 @@ public class ExceptionHelper {
             }
 
             @Override
-            public String getCode() {
+            public String getErrorCode() {
                 return finalErrorCode;
             }
 
             @Override
-            public String getMsg() {
+            public String getMessage() {
                 return finalMessage;
             }
 
             @Override
-            public String getMsg(Object... format) {
+            public String getMessage(Object... format) {
                 return finalMessage;
             }
         };

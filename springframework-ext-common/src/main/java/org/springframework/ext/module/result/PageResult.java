@@ -4,7 +4,6 @@ import lombok.Data;
 import org.springframework.ext.common.exception.NestedRuntimeException;
 import org.springframework.ext.common.object.Status;
 import org.springframework.ext.module.response.PageModule;
-import org.springframework.ext.module.response.Response;
 
 @Data
 public class PageResult<T> extends Result<PageModule<T>> {
@@ -19,7 +18,7 @@ public class PageResult<T> extends Result<PageModule<T>> {
      * @param status 状态码
      */
     public static PageResult create(Status status) {
-        return create(status.isSuccess(), status.getStatus(), status.getCode(), status.getMsg());
+        return create(status.isSuccess(), status.getStatus(), status.getErrorCode(), status.getMessage());
     }
 
     /**
@@ -28,7 +27,7 @@ public class PageResult<T> extends Result<PageModule<T>> {
      * @param e 异常
      */
     public static PageResult create(NestedRuntimeException e) {
-        return create(false, e.getStatus(), e.getCode(), e.getMsg());
+        return create(false, e.getStatus(), e.getErrorCode(), e.getErrorMessage());
     }
 
     /**
@@ -40,8 +39,8 @@ public class PageResult<T> extends Result<PageModule<T>> {
         PageResult response = new PageResult();
         response.setSuccess(success);
         response.setStatus(status);
-        response.setCode(errorCode);
-        response.setMsg(message);
+        response.setErrorCode(errorCode);
+        response.setMessage(message);
 
         return response;
     }
@@ -53,7 +52,7 @@ public class PageResult<T> extends Result<PageModule<T>> {
      * @param messages 替换文本
      */
     public static PageResult create(Status status, String... messages) {
-        return create(status.isSuccess(), status.getStatus(), status.getCode(), status.getMsg(), messages);
+        return create(status.isSuccess(), status.getStatus(), status.getErrorCode(), status.getMessage(), messages);
     }
 
     /**
@@ -67,7 +66,7 @@ public class PageResult<T> extends Result<PageModule<T>> {
 
         result.setSuccess(success);
         result.setStatus(status);
-        result.setCode(errorCode);
+        result.setErrorCode(errorCode);
         if (message != null && message.contains("%s")) {
             if (messages != null) {
                 message = String.format(message, (Object[]) messages);
@@ -77,7 +76,7 @@ public class PageResult<T> extends Result<PageModule<T>> {
                 message = message.replaceAll("%s", "");
             }
         }
-        result.setMsg(message);
+        result.setMessage(message);
 
         return result;
     }

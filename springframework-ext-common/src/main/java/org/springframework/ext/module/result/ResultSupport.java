@@ -17,13 +17,13 @@ public interface ResultSupport<T> extends Serializable {
 
     void setStatus(int status);
 
-    String getCode();
+    String getErrorCode();
 
-    void setCode(String code);
+    void setErrorCode(String errorCode);
 
-    String getMsg();
+    String getMessage();
 
-    void setMsg(String msg);
+    void setMessage(String message);
 
     T getData();
 

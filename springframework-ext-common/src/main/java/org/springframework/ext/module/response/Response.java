@@ -9,6 +9,7 @@ import org.springframework.ext.module.result.Result;
  * 结果对象
  *
  * @param <T> 模板
+ *
  * @author only 2017-7-2
  */
 @Data
@@ -18,13 +19,25 @@ public class Response<T> extends Result<T> {
         super();
     }
 
+    public Response(Status status) {
+        super(status);
+    }
+
+    public Response(boolean success, int status, String errorCode, String message) {
+        super(success, status, errorCode, message);
+    }
+
+    public Response(boolean success, int status, String errorCode, String message, String[] messages) {
+        super(success, status, errorCode, message, messages);
+    }
+
     /**
      * 设置状态码
      *
      * @param status 状态码
      */
     public static Response create(Status status) {
-        return create(status.isSuccess(), status.getStatus(), status.getCode(), status.getMsg());
+        return new Response(status);
     }
 
     /**
@@ -33,7 +46,7 @@ public class Response<T> extends Result<T> {
      * @param e 异常
      */
     public static Response create(NestedRuntimeException e) {
-        return create(false, e.getStatus(), e.getCode(), e.getMsg());
+        return create(false, e.getStatus(), e.getErrorCode(), e.getErrorMessage());
     }
 
     /**
@@ -42,13 +55,7 @@ public class Response<T> extends Result<T> {
      * @param status 状态码
      */
     public static Response create(boolean success, int status, String errorCode, String message) {
-        Response response = new Response();
-        response.setSuccess(success);
-        response.setStatus(status);
-        response.setCode(errorCode);
-        response.setMsg(message);
-
-        return response;
+        return new Response(success, status, errorCode, message);
     }
 
     /**
@@ -58,7 +65,7 @@ public class Response<T> extends Result<T> {
      * @param messages 替换文本
      */
     public static Response create(Status status, String... messages) {
-        return create(status.isSuccess(), status.getStatus(), status.getCode(), status.getMsg(), messages);
+        return create(status.isSuccess(), status.getStatus(), status.getErrorCode(), status.getMessage(), messages);
     }
 
     /**
@@ -68,22 +75,6 @@ public class Response<T> extends Result<T> {
      * @param messages 替换文本
      */
     public static Response create(boolean success, int status, String errorCode, String message, String... messages) {
-        Response result = new Response();
-
-        result.setSuccess(success);
-        result.setStatus(status);
-        result.setCode(errorCode);
-        if (message != null && message.contains("%s")) {
-            if (messages != null) {
-                message = String.format(message, (Object[]) messages);
-            }
-            // 无替换文本
-            else {
-                message = message.replaceAll("%s", "");
-            }
-        }
-        result.setMsg(message);
-
-        return result;
+        return new Response(success, status, errorCode, message, messages);
     }
 }
