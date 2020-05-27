@@ -25,7 +25,7 @@ public interface ResultSupport<T> extends Serializable {
 
     void setMessage(String message);
 
-    T getData();
+    T getModule();
 
-    void setData(T data);
+    void setModule(T module);
 }
