@@ -13,11 +13,11 @@ public class NestedRuntimeException extends RuntimeException {
     }
 
     public NestedRuntimeException(Status status) {
-        this(status.getStatus(), status.getCode(), status.getMsg());
+        this(status.getStatus(), status.getErrorCode(), status.getMessage());
     }
 
     public NestedRuntimeException(Status status, Throwable throwable) {
-        this(status.getStatus(), status.getCode(), status.getMsg(), throwable);
+        this(status.getStatus(), status.getErrorCode(), status.getMessage(), throwable);
     }
 
     public NestedRuntimeException(int status, String errorCode, String errorMessage) {
@@ -34,11 +34,11 @@ public class NestedRuntimeException extends RuntimeException {
         return status != null && !status.isEmpty() ? Integer.valueOf(status) : 0;
     }
 
-    public String getCode() {
+    public String getErrorCode() {
         return getMessageSplit(1);
     }
 
-    public String getMsg() {
+    public String getErrorMessage() {
         return getMessageSplit(2);
     }
 

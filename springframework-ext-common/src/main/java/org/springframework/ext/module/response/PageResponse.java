@@ -4,8 +4,6 @@ import lombok.Data;
 import org.springframework.ext.common.exception.NestedRuntimeException;
 import org.springframework.ext.common.object.Status;
 
-import java.util.List;
-
 @Data
 public class PageResponse<T> extends Response<PageModule<T>> {
     /** 构造函数 */
@@ -19,7 +17,7 @@ public class PageResponse<T> extends Response<PageModule<T>> {
      * @param status 状态码
      */
     public static PageResponse create(Status status) {
-        return create(status.isSuccess(), status.getStatus(), status.getCode(), status.getMsg());
+        return create(status.isSuccess(), status.getStatus(), status.getErrorCode(), status.getMessage());
     }
 
     /**
@@ -28,7 +26,7 @@ public class PageResponse<T> extends Response<PageModule<T>> {
      * @param e 异常
      */
     public static PageResponse create(NestedRuntimeException e) {
-        return create(false, e.getStatus(), e.getCode(), e.getMsg());
+        return create(false, e.getStatus(), e.getErrorCode(), e.getErrorMessage());
     }
 
     /**
@@ -40,8 +38,8 @@ public class PageResponse<T> extends Response<PageModule<T>> {
         PageResponse response = new PageResponse();
         response.setSuccess(success);
         response.setStatus(status);
-        response.setCode(errorCode);
-        response.setMsg(message);
+        response.setErrorCode(errorCode);
+        response.setMessage(message);
 
         return response;
     }
@@ -53,7 +51,7 @@ public class PageResponse<T> extends Response<PageModule<T>> {
      * @param messages 替换文本
      */
     public static PageResponse create(Status status, String... messages) {
-        return create(status.isSuccess(), status.getStatus(), status.getCode(), status.getMsg(), messages);
+        return create(status.isSuccess(), status.getStatus(), status.getErrorCode(), status.getMessage(), messages);
     }
 
     /**
@@ -67,7 +65,7 @@ public class PageResponse<T> extends Response<PageModule<T>> {
 
         result.setSuccess(success);
         result.setStatus(status);
-        result.setCode(errorCode);
+        result.setErrorCode(errorCode);
         if (message != null && message.contains("%s")) {
             if (messages != null) {
                 message = String.format(message, (Object[]) messages);
@@ -77,7 +75,7 @@ public class PageResponse<T> extends Response<PageModule<T>> {
                 message = message.replaceAll("%s", "");
             }
         }
-        result.setMsg(message);
+        result.setMessage(message);
 
         return result;
     }

@@ -26,19 +26,19 @@ public interface Status {
      *
      * @return 错误码
      */
-    public String getCode();
+    public String getErrorCode();
 
     /**
      * 状态描述
      *
      * @return 状态描述
      */
-    public String getMsg();
+    public String getMessage();
 
     /**
      * 状态描述
      *
      * @return 状态描述
      */
-    public String getMsg(Object... format);
+    public String getMessage(Object... format);
 }
