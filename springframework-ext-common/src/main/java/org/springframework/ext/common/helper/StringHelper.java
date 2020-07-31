@@ -7,7 +7,6 @@ import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ext.common.consts.StringConst;
 import org.springframework.ext.common.exception.ExceptionHelper;
-import org.springframework.ext.common.exception.NestedRuntimeException;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -107,7 +106,7 @@ public final class StringHelper {
         try {
             return URLDecoder.decode(s, charset);
         } catch (UnsupportedEncodingException e) {
-            throw ExceptionHelper.throwException(e);
+            throw ExceptionHelper.createNestedException(e);
         }
     }
 
@@ -122,7 +121,7 @@ public final class StringHelper {
         try {
             return URLEncoder.encode(s, charset);
         } catch (UnsupportedEncodingException e) {
-            throw ExceptionHelper.throwException(e);
+            throw ExceptionHelper.createNestedException(e);
         }
     }
 
@@ -143,7 +142,7 @@ public final class StringHelper {
                 try {
                     bytes = str.getBytes(charset);
                 } catch (UnsupportedEncodingException e) {
-                    throw ExceptionHelper.throwException(e);
+                    throw ExceptionHelper.createNestedException(e);
                 }
             }
             // 如果bytes为空，初始化
@@ -169,7 +168,7 @@ public final class StringHelper {
                 try {
                     str = new String(bytes, charset);
                 } catch (UnsupportedEncodingException e) {
-                    throw ExceptionHelper.throwException(e);
+                    throw ExceptionHelper.createNestedException(e);
                 }
             }
             // 如果str为空，初始化
