@@ -52,7 +52,7 @@ public abstract class JsonHelper {
             }
             return mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            throw ExceptionHelper.throwException(e);
+            throw ExceptionHelper.createNestedException(e);
         }
     }
 
@@ -71,7 +71,7 @@ public abstract class JsonHelper {
         try {
             return mapper.readValue(json, clazz);
         } catch (IOException e) {
-            throw ExceptionHelper.throwException(e);
+            throw ExceptionHelper.createNestedException(e);
         }
     }
 
@@ -92,7 +92,7 @@ public abstract class JsonHelper {
         try {
             return mapper.readValue(json, javaType);
         } catch (IOException e) {
-            throw ExceptionHelper.throwException(e);
+            throw ExceptionHelper.createNestedException(e);
         }
     }
 
@@ -112,7 +112,7 @@ public abstract class JsonHelper {
         try {
             return mapper.readValue(json, javaType);
         } catch (IOException e) {
-            throw ExceptionHelper.throwException(e);
+            throw ExceptionHelper.createNestedException(e);
         }
     }
 }

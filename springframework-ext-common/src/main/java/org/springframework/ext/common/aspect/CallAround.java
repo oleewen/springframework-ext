@@ -127,7 +127,7 @@ public class CallAround {
         // 记录异常日志
         logger.error(String.format("exception@method:%s,args:%s,elapsed:%d;duration:%d", joinPoint.getSignature().toShortString(), JsonHelper.toJson(joinPoint.getArgs()), call.elapsed(), elapsed), t);
         // 重新抛出异常
-        throw ExceptionHelper.throwException(t);
+        throw ExceptionHelper.createNestedException(t);
     }
 
     private Logger getLogger(ProceedingJoinPoint joinPoint, Call call) {
