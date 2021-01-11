@@ -23,4 +23,8 @@ public class NotCatchRuntimeException extends NestedRuntimeException {
     public NotCatchRuntimeException(int status, String errorCode, String message) {
         super(status, errorCode, message);
     }
+
+    public NotCatchRuntimeException(int status, String errorCode, String message, Throwable t) {
+        super(status, errorCode, message, t);
+    }
 }

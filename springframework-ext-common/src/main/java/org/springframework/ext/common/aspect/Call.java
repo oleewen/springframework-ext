@@ -24,4 +24,13 @@ public @interface Call {
 
     /** 采样基数：默认10000 */
     int basic() default 10000;
+
+    /** 状态码 */
+    int status() default 0;
+
+    /** 错误码 */
+    String errorCode() default "";
+
+    /** 错误信息 */
+    String errorMessage() default "";
 }

@@ -6,20 +6,20 @@ package org.springframework.ext.biz.helper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ext.common.consts.StringConst;
-import org.springframework.ext.common.util.Utils;
+import org.springframework.ext.common.helper.StringHelper;
 
 import java.util.Map;
 
 /**
  * 签名辅助类
- * 
+ *
  * @author only 2012-8-3
  */
 public class SignatureHelper {
 
 	/**
 	 * 生成签名url
-	 * 
+	 *
 	 * @param url
 	 *            请求url
 	 * @param params
@@ -33,13 +33,13 @@ public class SignatureHelper {
 	 * @return 签名url
 	 */
 	public static String getMd5Url(String url, Map<String, String> params, String prefix, String suffix, String signKey) {
-		String queryString = Utils.treeMap2Str(params, StringConst.AND, StringConst.EQ);
+		String queryString = StringHelper.treeMap2Str(params, StringConst.AND, StringConst.EQ);
 		return getMd5Url(url, queryString, prefix, suffix, signKey);
 	}
 
 	/**
 	 * 生成签名url
-	 * 
+	 *
 	 * @param url
 	 *            请求url
 	 * @param queryString
@@ -62,7 +62,7 @@ public class SignatureHelper {
 
 	/**
 	 * 为参数集合params生成调用接口url（含md5签名），参数串形式为k1=v1&k2=v2&k3=v3
-	 * 
+	 *
 	 * @param url
 	 *            请求url
 	 * @param params
@@ -74,13 +74,13 @@ public class SignatureHelper {
 	 * @return 调用接口签名url
 	 */
 	public static String getSignUrl(String url, Map<String, String> params, String signKey, String signVal) {
-		String queryString = Utils.treeMap2Str(params, StringConst.AND, StringConst.EQ);
+		String queryString = StringHelper.treeMap2Str(params, StringConst.AND, StringConst.EQ);
 		return getSignUrl(url, queryString, signKey, signVal);
 	}
 
 	/**
 	 * 为查询串queryString生成调用接口url（含md5签名）
-	 * 
+	 *
 	 * @param url
 	 *            请求url
 	 * @param queryString
@@ -104,7 +104,7 @@ public class SignatureHelper {
 
 	/**
 	 * 对参数集合params做md5签名：签名原始字符串为： prefix + 参数串 + suffix
-	 * 
+	 *
 	 * @param params
 	 *            参数集合
 	 * @param prefix
@@ -114,7 +114,7 @@ public class SignatureHelper {
 	 * @return md5签名
 	 */
 	public static String getMd5Sign(Map<String, String> params, String prefix, String suffix) {
-		String queryString = Utils.treeMap2Str(params, StringConst.AND, StringConst.EQ);
+		String queryString = StringHelper.treeMap2Str(params, StringConst.AND, StringConst.EQ);
 		return getMd5Sign(queryString, prefix, suffix);
 	}
 
