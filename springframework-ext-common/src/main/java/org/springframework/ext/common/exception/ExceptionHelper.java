@@ -31,6 +31,10 @@ public class ExceptionHelper {
         return new NotCatchRuntimeException(status, errorCode, message);
     }
 
+    public static NotCatchRuntimeException createNotCatchException(int status, String errorCode, String message, Throwable t) {
+        return new NotCatchRuntimeException(status, errorCode, message, t);
+    }
+
     public static NestedRuntimeException createNestedException(String errorMessage) {
         return createNestedException(NestedRuntimeException.parseErrorMessage(errorMessage));
     }
@@ -53,5 +57,9 @@ public class ExceptionHelper {
 
     public static NestedRuntimeException createNestedException(int status, String errorCode, String message) {
         return new NestedRuntimeException(status, errorCode, message);
+    }
+
+    public static NestedRuntimeException createNestedException(int status, String errorCode, String message, Throwable t) {
+        return new NestedRuntimeException(status, errorCode, message, t);
     }
 }

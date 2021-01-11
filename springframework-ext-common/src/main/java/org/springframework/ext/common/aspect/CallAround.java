@@ -8,6 +8,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ext.common.exception.ExceptionHelper;
+import org.springframework.ext.common.exception.NestedRuntimeException;
 import org.springframework.ext.common.helper.JsonHelper;
 import org.springframework.ext.common.setting.Context;
 import org.springframework.ext.module.result.ResultSupport;
@@ -18,19 +19,19 @@ import java.util.Random;
 /**
  * 日志切面
  * <pre>
- @Aspect
- public class CallAspect extends CallAround {
- }
+   @Aspect
+   public class CallAspect extends CallAround {
+   }
 
- @Configuration
- @EnableAspectJAutoProxy
- @ComponentScan
- public class SpringConfig {
-      @Bean
-      public CallAspect callAspect() {
-          return new CallAspect();
-      }
- }
+   @Configuration
+   @EnableAspectJAutoProxy
+   @ComponentScan
+   public class SpringConfig {
+     @Bean
+     public CallAspect callAspect() {
+       return new CallAspect();
+     }
+   }
  * </pre>
  *
  * @author only
@@ -124,9 +125,18 @@ public class CallAround {
 
     private void error(ProceedingJoinPoint joinPoint, Call call, long elapsed, Exception t) {
         Logger logger = getLogger(joinPoint, call);
-        // 记录异常日志
+        /** 记录异常日志 */
         logger.error(String.format("exception@method:%s,args:%s,elapsed:%d;duration:%d", joinPoint.getSignature().toShortString(), JsonHelper.toJson(joinPoint.getArgs()), call.elapsed(), elapsed), t);
-        // 重新抛出异常
+        /** 重新抛出异常 */
+        // 自定义内部异常，直接抛出
+        if (t instanceof NestedRuntimeException) {
+            throw (NestedRuntimeException) t;
+        }
+        // 系统内部异常，优先采用Call注解定义的业务码
+        if (call.status() != 0 && StringUtils.isNotEmpty(call.errorCode())) {
+            throw ExceptionHelper.createNestedException(call.status(), call.errorCode(), call.errorMessage(), t);
+        }
+        // Call未定义业务码，包装为自定义内部错误码
         throw ExceptionHelper.createNestedException(t);
     }
 

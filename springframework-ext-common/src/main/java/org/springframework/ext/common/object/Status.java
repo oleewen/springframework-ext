@@ -12,33 +12,33 @@ public interface Status {
      *
      * @return 成功状态，返回true；否则，返回false
      */
-    public boolean isSuccess();
+    boolean isSuccess();
 
     /**
      * 状态码值
      *
      * @return 状态码值
      */
-    public int getStatus();
+    int getStatus();
 
     /**
      * 错误码
      *
      * @return 错误码
      */
-    public String getErrorCode();
+    String getErrorCode();
 
     /**
      * 状态描述
      *
      * @return 状态描述
      */
-    public String getMessage();
+    String getMessage();
 
     /**
      * 状态描述
      *
      * @return 状态描述
      */
-    public String getMessage(Object... format);
+    String getMessage(Object... format);
 }
