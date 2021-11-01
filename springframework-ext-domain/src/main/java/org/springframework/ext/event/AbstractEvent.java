@@ -15,8 +15,8 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class AbstractEvent<T> implements Event {
     protected T module;
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private EventFuture future = new EventFuture();
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final EventFuture future = new EventFuture();
 
     public AbstractEvent(T module) {
         this.module = module;
@@ -28,7 +28,8 @@ public abstract class AbstractEvent<T> implements Event {
         } catch (Exception e) {
             logger.error(String.format("waitDone\01event\02%s\01timeout\02%s\01exception\02%s", JsonHelper.toJson(this), TimeUnit.MILLISECONDS.toMillis(timeout), Throwables.getRootCause(e)));
 
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
 
